@@ -1,26 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌱 Eco Chess
 
-## Getting Started
+An ecological approach to chess - playing constraint-based mini games that focus on specific pieces and winning conditions.
 
-First, run the development server:
+## 🎮 Current Game: Pawn Race
+
+The first variant removes every piece except for the pawns. Two players race to promote a pawn first to win!
+
+**Rules:**
+- Only pawns remain on the board
+- Standard pawn movement (1 or 2 squares forward from starting position, diagonal captures)
+- First player to promote a pawn to the opposite end wins
+- Turn-based gameplay with move validation
+
+## 🚀 Getting Started
+
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to play!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏗️ Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── app/                 # Next.js app directory
+│   ├── page.tsx        # Main game page
+│   ├── autotest/       # Automated testing page
+│   └── test/           # Test page with react-chessboard
+├── components/         # React components
+│   ├── ChessGame.tsx   # Main game component
+│   └── SimpleChessboard.tsx  # Custom chessboard UI
+├── contexts/          # React context providers
+│   └── GameContext.tsx # Game state management
+├── lib/               # Core game logic
+│   └── ecoChess.ts    # Game engine and variants
+└── types/             # TypeScript type definitions
+    └── game.ts        # Game-related types
+```
 
-## Learn More
+## 🎯 Features
+
+- ✅ Turn-based gameplay
+- ✅ Move validation for pawn moves
+- ✅ Win condition detection (pawn promotion)
+- ✅ Move history tracking
+- ✅ Clean, responsive UI
+- ✅ TypeScript for type safety
+
+## 🔮 Future Game Variants
+
+The architecture supports adding more constraint-based chess variants:
+- Knights only
+- Bishops vs Knights
+- King and Pawns endgame
+- And more creative constraints!
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Chess Logic:** chess.js
+- **State Management:** React Context + useReducer
+
+## 📚 Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and design decisions
+- [QUICKSTART.md](QUICKSTART.md) - Quick start guide for developers
+- [GAME_STATUS.md](GAME_STATUS.md) - Current game status and features
+- [SOLUTION.md](SOLUTION.md) - Technical solutions and fixes
+
+## Learn More About Next.js
 
 To learn more about Next.js, take a look at the following resources:
 
