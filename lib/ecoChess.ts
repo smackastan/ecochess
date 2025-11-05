@@ -249,6 +249,153 @@ export const threePawnsVariant: GameVariant = {
   }
 };
 
+// Bishop Hunt Variant - 3 black pawns vs 1 white bishop
+export const bishopHuntVariant: GameVariant = {
+  name: "Bishop Hunt",
+  description: "3 black pawns try to promote while a white bishop hunts them down!",
+  initialBoard: (() => {
+    // Create initial board with 3 leftmost black pawns and 1 white bishop
+    const board: (GamePiece | null)[][] = Array(8).fill(null).map(() => Array(8).fill(null));
+    
+    // Black pawns on rank 7 (index 1), columns 0, 1, 2 (a, b, c files)
+    for (let col = 0; col < 3; col++) {
+      board[1][col] = { type: 'p', color: 'b' };
+    }
+    
+    // White bishop on f1 (rank 1 = index 7, f file = column 5)
+    board[7][5] = { type: 'b', color: 'w' };
+    
+    return board;
+  })(),
+  allowedPieces: ['p', 'b'],
+  winCondition: (gameState: GameState) => {
+    // Black wins if any pawn reaches rank 1 (index 7)
+    for (let col = 0; col < 3; col++) {
+      if (gameState.board[7][col]?.type === 'p' && gameState.board[7][col]?.color === 'b') {
+        return 'black-wins';
+      }
+    }
+    
+    // White wins if all black pawns are captured
+    let blackPawnCount = 0;
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        if (gameState.board[row][col]?.type === 'p' && gameState.board[row][col]?.color === 'b') {
+          blackPawnCount++;
+        }
+      }
+    }
+    
+    if (blackPawnCount === 0) {
+      return 'white-wins';
+    }
+    
+    return 'playing';
+  },
+  isValidMove: (from: string, to: string, gameState: GameState) => {
+    const [fromRow, fromCol] = squareToCoords(from);
+    const [toRow, toCol] = squareToCoords(to);
+    
+    const piece = gameState.board[fromRow][fromCol];
+    const targetPiece = gameState.board[toRow][toCol];
+    
+    console.log(`\n=== VALIDATING MOVE (Bishop Hunt) ===`);
+    console.log(`Move: ${from} -> ${to}`);
+    console.log(`Piece at source:`, piece);
+    console.log(`Piece at target:`, targetPiece);
+    console.log(`Current player:`, gameState.currentPlayer);
+    
+    // Must be moving your own piece
+    if (!piece || piece.color !== gameState.currentPlayer) {
+      console.log(`❌ Failed: Invalid piece or not current player's piece`);
+      return false;
+    }
+    
+    // Validate based on piece type
+    if (piece.type === 'p') {
+      // Pawn move validation (only black pawns)
+      if (piece.color !== 'b') {
+        console.log(`❌ Failed: Only black pawns allowed`);
+        return false;
+      }
+      
+      const direction = 1; // Black pawns move down
+      const startRank = 1;
+      const rowDiff = toRow - fromRow;
+      const colDiff = Math.abs(toCol - fromCol);
+      
+      // Forward move (1 square)
+      if (colDiff === 0 && rowDiff === direction && !targetPiece) {
+        console.log(`✅ Valid: Pawn forward 1 square`);
+        return true;
+      }
+      
+      // Forward move (2 squares from starting position)
+      if (colDiff === 0 && rowDiff === 2 * direction && fromRow === startRank && !targetPiece) {
+        const middleRow = fromRow + direction;
+        const middlePiece = gameState.board[middleRow][fromCol];
+        if (!middlePiece) {
+          console.log(`✅ Valid: Pawn forward 2 squares from start`);
+          return true;
+        }
+      }
+      
+      // Diagonal capture
+      if (colDiff === 1 && rowDiff === direction && targetPiece && targetPiece.color !== piece.color) {
+        console.log(`✅ Valid: Pawn diagonal capture`);
+        return true;
+      }
+      
+      console.log(`❌ Failed: Invalid pawn move`);
+      return false;
+      
+    } else if (piece.type === 'b') {
+      // Bishop move validation (only white bishop)
+      if (piece.color !== 'w') {
+        console.log(`❌ Failed: Only white bishop allowed`);
+        return false;
+      }
+      
+      const rowDiff = Math.abs(toRow - fromRow);
+      const colDiff = Math.abs(toCol - fromCol);
+      
+      // Must move diagonally (equal row and column difference)
+      if (rowDiff !== colDiff || rowDiff === 0) {
+        console.log(`❌ Failed: Bishop must move diagonally`);
+        return false;
+      }
+      
+      // Check if path is clear
+      const rowStep = toRow > fromRow ? 1 : -1;
+      const colStep = toCol > fromCol ? 1 : -1;
+      
+      let currentRow = fromRow + rowStep;
+      let currentCol = fromCol + colStep;
+      
+      while (currentRow !== toRow && currentCol !== toCol) {
+        if (gameState.board[currentRow][currentCol]) {
+          console.log(`❌ Failed: Path blocked at row ${currentRow}, col ${currentCol}`);
+          return false;
+        }
+        currentRow += rowStep;
+        currentCol += colStep;
+      }
+      
+      // Can't capture own pieces
+      if (targetPiece && targetPiece.color === piece.color) {
+        console.log(`❌ Failed: Can't capture own piece`);
+        return false;
+      }
+      
+      console.log(`✅ Valid: Bishop diagonal move`);
+      return true;
+    }
+    
+    console.log(`❌ Failed: Invalid piece type`);
+    return false;
+  }
+};
+
 export class EcoChessGame {
   private chess: Chess;
   private variant: GameVariant;

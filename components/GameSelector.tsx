@@ -72,7 +72,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
         </div>
 
         {/* Game Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           <GameCard
             title="Pawn Race"
             description="All 8 pawns race to promotion. Classic endgame training with full board action!"
@@ -98,6 +98,20 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
             onClick={() => {
               import('@/lib/ecoChess').then(({ threePawnsVariant }) => {
                 onSelectGame(threePawnsVariant);
+              });
+            }}
+          />
+          
+          <GameCard
+            title="Bishop Hunt"
+            description="Can 3 black pawns promote before the white bishop hunts them all down?"
+            emoji="♗"
+            difficulty="Hard"
+            playerCount="2 Players"
+            estimatedTime="5-8 min"
+            onClick={() => {
+              import('@/lib/ecoChess').then(({ bishopHuntVariant }) => {
+                onSelectGame(bishopHuntVariant);
               });
             }}
           />
