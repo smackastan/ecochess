@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
-import { GameState, Color } from '@/types/game';
+import { GameState, Color, GameVariant } from '@/types/game';
 import { EcoChessGame, pawnRaceVariant } from '@/lib/ecoChess';
 
 interface GameContextType {
@@ -9,6 +9,7 @@ interface GameContextType {
   makeMove: (from: string, to: string) => boolean;
   resetGame: () => void;
   getCurrentFen: () => string;
+  variantName: string;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -61,11 +62,12 @@ function gameReducer(state: GameProviderState, action: GameAction): GameProvider
 
 interface GameProviderProps {
   children: ReactNode;
+  variant?: GameVariant;
 }
 
-export function GameProvider({ children }: GameProviderProps) {
+export function GameProvider({ children, variant = pawnRaceVariant }: GameProviderProps) {
   // Initialize game instance only once with useMemo
-  const game = useMemo(() => new EcoChessGame(pawnRaceVariant), []);
+  const game = useMemo(() => new EcoChessGame(variant), [variant]);
   
   const [state, dispatch] = useReducer(gameReducer, {
     game,
@@ -97,7 +99,8 @@ export function GameProvider({ children }: GameProviderProps) {
     gameState: state.gameState,
     makeMove,
     resetGame,
-    getCurrentFen
+    getCurrentFen,
+    variantName: variant.name
   };
 
   return (

@@ -5,8 +5,12 @@ import { useGame } from '@/contexts/GameContext';
 import SimpleChessboard from './SimpleChessboard';
 import { coordsToSquare } from '@/lib/ecoChess';
 
-export default function ChessGame() {
-  const { gameState, makeMove, resetGame } = useGame();
+interface ChessGameProps {
+  onBackToMenu?: () => void;
+}
+
+export default function ChessGame({ onBackToMenu }: ChessGameProps) {
+  const { gameState, makeMove, resetGame, variantName } = useGame();
   const [selectedSquare, setSelectedSquare] = useState<[number, number] | null>(null);
 
   useEffect(() => {
@@ -77,10 +81,20 @@ export default function ChessGame() {
 
   return (
     <div className="flex flex-col items-center space-y-6 p-6">
+      {/* Back Button */}
+      {onBackToMenu && (
+        <button
+          onClick={onBackToMenu}
+          className="self-start px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors flex items-center gap-2"
+        >
+          ← Back to Menu
+        </button>
+      )}
+
       {/* Game Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          🌱 Eco Chess: Pawn Race
+          🌱 Eco Chess: {variantName}
         </h1>
         <p className="text-gray-600 max-w-md">
           Only pawns remain! Race to promote your pawn first to win.
