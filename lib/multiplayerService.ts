@@ -23,8 +23,10 @@ export interface MultiplayerGame {
 export interface GameInvite {
   id: string;
   from_user_id: string;
+  from_user_email?: string; // Deprecated: use sender_email instead
+  sender_email?: string; // From game_invites_with_users view
   to_user_email: string;
-  to_user_id?: string;
+  to_user_id?: string; // Auto-populated by database trigger
   variant_name: string;
   time_control: number;
   status: 'pending' | 'accepted' | 'declined' | 'expired';
@@ -51,17 +53,11 @@ export class MultiplayerService {
       return { data: null, error: new Error('User not authenticated') };
     }
 
-    // Check if recipient exists
-    const { data: toUser } = await this.supabase
-      .from('auth.users')
-      .select('id')
-      .eq('email', toUserEmail)
-      .single();
-
+    // Note: We can't query auth.users directly from the client
+    // Instead, we'll just store the email and let the recipient claim it when they log in
     const inviteData = {
       from_user_id: user.id,
-      to_user_email: toUserEmail,
-      to_user_id: toUser?.id,
+      to_user_email: toUserEmail.toLowerCase().trim(), // Normalize email
       variant_name: variantName,
       time_control: timeControl,
     };
@@ -75,8 +71,8 @@ export class MultiplayerService {
     return { data, error };
   }
 
-  // Get pending invites for current user
-  async getMyInvites(): Promise<{ data: GameInvite[] | null; error: any }> {
+  // Get pending invites for current user (with sender email)
+  async getMyInvites(): Promise<{ data: any[] | null; error: any }> {
     const {
       data: { user },
     } = await this.supabase.auth.getUser();
@@ -85,10 +81,11 @@ export class MultiplayerService {
       return { data: null, error: new Error('User not authenticated') };
     }
 
+    // Use the view that includes sender email
     const { data, error } = await this.supabase
-      .from('game_invites')
+      .from('game_invites_with_users')
       .select('*')
-      .or(`to_user_id.eq.${user.id},from_user_id.eq.${user.id}`)
+      .or(`to_user_email.eq.${user.email},from_user_id.eq.${user.id}`)
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
 

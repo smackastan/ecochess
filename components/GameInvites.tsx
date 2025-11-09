@@ -77,7 +77,7 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
     });
   };
 
-  const receivedInvites = invites.filter((inv) => inv.to_user_id === user?.id);
+  const receivedInvites = invites.filter((inv) => inv.to_user_email === user?.email);
   const sentInvites = invites.filter((inv) => inv.from_user_id === user?.id);
 
   return (
@@ -120,7 +120,7 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
                               <span className="text-2xl">🎮</span>
                               <div>
                                 <p className="font-semibold text-gray-800">
-                                  Challenge from {invite.to_user_email}
+                                  Challenge from {invite.sender_email || invite.from_user_email || 'Unknown'}
                                 </p>
                                 <p className="text-sm text-gray-600">
                                   {invite.variant_name} • {formatTime(invite.time_control)} per player
