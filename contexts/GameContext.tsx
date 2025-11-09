@@ -1,8 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useMemo, ReactNode, useEffect, useRef } from 'react';
 import { GameState, Color, GameVariant } from '@/types/game';
 import { EcoChessGame, pawnRaceVariant } from '@/lib/ecoChess';
+import { gameService } from '@/lib/gameService';
+import { useAuth } from './AuthContext';
 
 interface GameContextType {
   gameState: GameState;
@@ -10,6 +12,7 @@ interface GameContextType {
   resetGame: () => void;
   getCurrentFen: () => string;
   variantName: string;
+  currentGameId: string | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -66,6 +69,9 @@ interface GameProviderProps {
 }
 
 export function GameProvider({ children, variant = pawnRaceVariant }: GameProviderProps) {
+  const { user } = useAuth();
+  const currentGameId = useRef<string | null>(null);
+  
   // Initialize game instance only once with useMemo
   const game = useMemo(() => new EcoChessGame(variant), [variant]);
   
@@ -73,6 +79,33 @@ export function GameProvider({ children, variant = pawnRaceVariant }: GameProvid
     game,
     gameState: game.getGameState()
   });
+
+  // Save game to database when game ends
+  useEffect(() => {
+    const saveGameToDatabase = async () => {
+      if (!user) return; // Don't save if not logged in
+      
+      const { gameState } = state;
+      
+      // Check if game just ended
+      if (gameState.gameStatus !== 'playing') {
+        const fen = state.game.getCurrentFen();
+        
+        if (currentGameId.current) {
+          // Update existing game
+          await gameService.updateGame(currentGameId.current, gameState, fen);
+        } else {
+          // Create new game
+          const { data } = await gameService.saveGame(variant.name, gameState, fen);
+          if (data) {
+            currentGameId.current = data.id;
+          }
+        }
+      }
+    };
+
+    saveGameToDatabase();
+  }, [state.gameState.gameStatus, user, variant.name, state]);
 
   const makeMove = (from: string, to: string): boolean => {
     // Use the reducer to handle the move
@@ -88,6 +121,7 @@ export function GameProvider({ children, variant = pawnRaceVariant }: GameProvid
   };
 
   const resetGame = () => {
+    currentGameId.current = null; // Reset the game ID when starting a new game
     dispatch({ type: 'RESET_GAME' });
   };
 
@@ -100,7 +134,8 @@ export function GameProvider({ children, variant = pawnRaceVariant }: GameProvid
     makeMove,
     resetGame,
     getCurrentFen,
-    variantName: variant.name
+    variantName: variant.name,
+    currentGameId: currentGameId.current
   };
 
   return (
