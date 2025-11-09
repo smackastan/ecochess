@@ -86,7 +86,7 @@ export class MultiplayerService {
       .from('game_invites_with_users')
       .select('*')
       .or(`to_user_email.eq.${user.email},from_user_id.eq.${user.id}`)
-      .eq('status', 'pending')
+      .in('status', ['pending', 'accepted'])
       .order('created_at', { ascending: false });
 
     return { data, error };
@@ -300,6 +300,29 @@ export class MultiplayerService {
         'postgres_changes',
         {
           event: 'INSERT',
+          schema: 'public',
+          table: 'game_invites',
+        },
+        (payload) => {
+          const invite = payload.new as GameInvite;
+          callback(invite);
+        }
+      )
+      .subscribe();
+
+    return channel;
+  }
+
+  // Subscribe to invite updates (for when they're accepted/declined)
+  async subscribeToInviteUpdates(callback: (invite: GameInvite) => void): Promise<RealtimeChannel> {
+    const { data: { user } } = await this.supabase.auth.getUser();
+
+    const channel = this.supabase
+      .channel('invite-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
           schema: 'public',
           table: 'game_invites',
         },
