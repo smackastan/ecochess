@@ -419,6 +419,10 @@ export class EcoChessGame {
     
     console.log('Setting up board, gameState.board:', this.gameState.board);
     
+    // Check if the variant has kings
+    let hasWhiteKing = false;
+    let hasBlackKing = false;
+    
     // Set up the custom board position for FEN display
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
@@ -427,7 +431,25 @@ export class EcoChessGame {
           const square = coordsToSquare(row, col) as Square;
           console.log(`Putting ${piece.color}${piece.type} on ${square}`);
           this.chess.put({ type: piece.type, color: piece.color }, square);
+          
+          if (piece.type === 'k' && piece.color === 'w') hasWhiteKing = true;
+          if (piece.type === 'k' && piece.color === 'b') hasBlackKing = true;
         }
+      }
+    }
+    
+    // Add temporary kings if missing (required for valid FEN)
+    // We'll place them off-board conceptually (e1 and e8 if empty)
+    if (!hasWhiteKing) {
+      const e1Square = 'e1' as Square;
+      if (!this.chess.get(e1Square)) {
+        this.chess.put({ type: 'k', color: 'w' }, e1Square);
+      }
+    }
+    if (!hasBlackKing) {
+      const e8Square = 'e8' as Square;
+      if (!this.chess.get(e8Square)) {
+        this.chess.put({ type: 'k', color: 'b' }, e8Square);
       }
     }
     
@@ -459,13 +481,33 @@ export class EcoChessGame {
     
     // Update chess.js board for FEN display
     this.chess.clear();
+    let hasWhiteKing = false;
+    let hasBlackKing = false;
+    
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const p = this.gameState.board[row][col];
         if (p) {
           const square = coordsToSquare(row, col) as Square;
           this.chess.put({ type: p.type, color: p.color }, square);
+          
+          if (p.type === 'k' && p.color === 'w') hasWhiteKing = true;
+          if (p.type === 'k' && p.color === 'b') hasBlackKing = true;
         }
+      }
+    }
+    
+    // Add temporary kings if missing (required for valid FEN)
+    if (!hasWhiteKing) {
+      const e1Square = 'e1' as Square;
+      if (!this.chess.get(e1Square)) {
+        this.chess.put({ type: 'k', color: 'w' }, e1Square);
+      }
+    }
+    if (!hasBlackKing) {
+      const e8Square = 'e8' as Square;
+      if (!this.chess.get(e8Square)) {
+        this.chess.put({ type: 'k', color: 'b' }, e8Square);
       }
     }
     
@@ -502,6 +544,24 @@ export class EcoChessGame {
       
       // Update our game state board from the FEN
       this.gameState.board = chessJsToGameBoard(this.chess);
+      
+      // Remove temporary kings from game state if they were added at e1/e8
+      // and are not part of the actual variant
+      const e1King = this.gameState.board[7][4]; // e1 = row 7, col 4
+      const e8King = this.gameState.board[0][4]; // e8 = row 0, col 4
+      
+      // Check if variant should have kings
+      const variantHasKings = this.variant.allowedPieces.includes('k');
+      
+      if (!variantHasKings) {
+        // Remove kings from e1 and e8 if they exist (they're temporary)
+        if (e1King?.type === 'k' && e1King?.color === 'w') {
+          this.gameState.board[7][4] = null;
+        }
+        if (e8King?.type === 'k' && e8King?.color === 'b') {
+          this.gameState.board[0][4] = null;
+        }
+      }
       
       // Extract current player from FEN (second field)
       const fenParts = fen.split(' ');
