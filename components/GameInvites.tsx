@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { multiplayerService, GameInvite } from '@/lib/multiplayerService';
+import { getVariantInitialFen } from '@/lib/ecoChess';
 
 interface GameInvitesProps {
   onClose: () => void;
-  onAcceptInvite: (gameId: string) => void;
+  onAcceptInvite: (gameId: string) => void | Promise<void>;
 }
 
 export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProps) {
@@ -60,8 +61,8 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
   };
 
   const handleAccept = async (inviteId: string, variantName: string) => {
-    // TODO: Get initial FEN from variant
-    const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    // Get the correct initial FEN for this variant
+    const initialFen = getVariantInitialFen(variantName);
     
     const { data, error } = await multiplayerService.acceptInvite(inviteId, initialFen);
     if (data && !error) {

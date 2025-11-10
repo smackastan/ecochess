@@ -583,3 +583,40 @@ export class EcoChessGame {
     this.setupBoard();
   }
 }
+
+// Helper function to get initial FEN for a variant
+export function getVariantInitialFen(variantName: string): string {
+  let variant: GameVariant;
+  
+  switch (variantName) {
+    case 'Pawn Race':
+      variant = pawnRaceVariant;
+      break;
+    case 'Three Pawns Sprint':
+      variant = threePawnsVariant;
+      break;
+    case 'Bishop Hunt':
+      variant = bishopHuntVariant;
+      break;
+    default:
+      variant = pawnRaceVariant;
+  }
+  
+  // Create a temporary game to get the FEN
+  const tempGame = new EcoChessGame(variant);
+  return tempGame.getCurrentFen();
+}
+
+// Helper function to get variant by name
+export function getVariantByName(variantName: string): GameVariant {
+  switch (variantName) {
+    case 'Pawn Race':
+      return pawnRaceVariant;
+    case 'Three Pawns Sprint':
+      return threePawnsVariant;
+    case 'Bishop Hunt':
+      return bishopHuntVariant;
+    default:
+      return pawnRaceVariant;
+  }
+}

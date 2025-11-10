@@ -11,7 +11,8 @@ import GameInvites from '@/components/GameInvites';
 import MultiplayerGameComponent from '@/components/MultiplayerGameComponent';
 import { useAuth } from '@/contexts/AuthContext';
 import { GameVariant } from '@/types/game';
-import { pawnRaceVariant, threePawnsVariant, bishopHuntVariant } from '@/lib/ecoChess';
+import { pawnRaceVariant, threePawnsVariant, bishopHuntVariant, getVariantByName } from '@/lib/ecoChess';
+import { multiplayerService } from '@/lib/multiplayerService';
 
 export default function Home() {
   const [selectedVariant, setSelectedVariant] = useState<GameVariant | null>(null);
@@ -80,10 +81,17 @@ export default function Home() {
         {showInvites && (
           <GameInvites
             onClose={() => setShowInvites(false)}
-            onAcceptInvite={(gameId) => {
+            onAcceptInvite={async (gameId) => {
               setMultiplayerGameId(gameId);
-              // Find variant from game
-              setSelectedVariant(allVariants[0]); // TODO: Get from game data
+              // Get the variant from game data
+              const { data: gameData } = await multiplayerService.getGame(gameId);
+              if (gameData) {
+                const variant = getVariantByName(gameData.variant_name);
+                setSelectedVariant(variant);
+              } else {
+                // Fallback
+                setSelectedVariant(allVariants[0]);
+              }
             }}
           />
         )}
