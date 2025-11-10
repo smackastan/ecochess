@@ -71,15 +71,23 @@ export default function MultiplayerGameComponent({
       setGame(data);
       // Initialize chess game with current FEN
       const newChessGame = new EcoChessGame(variant);
-      // TODO: Load FEN into chess game
+      if (data.current_fen) {
+        // Load position from FEN
+        newChessGame.loadFromFen(data.current_fen);
+      }
       setChessGame(newChessGame);
+      lastMoveTimeRef.current = data.last_move_at ? new Date(data.last_move_at).getTime() : Date.now();
     }
   };
 
   const updateChessGameFromFen = (fen: string) => {
-    // TODO: Implement FEN loading in EcoChessGame
-    // For now, we'll recreate the game
+    if (!chessGame) return;
+    
+    // Load the FEN into the existing chess game
+    chessGame.loadFromFen(fen);
+    // Force a re-render by creating a new instance
     const newChessGame = new EcoChessGame(variant);
+    newChessGame.loadFromFen(fen);
     setChessGame(newChessGame);
   };
 
@@ -92,17 +100,17 @@ export default function MultiplayerGameComponent({
       if (!game || game.game_status !== 'active') return;
 
       const now = Date.now();
-      const lastMove = game.last_move_at ? new Date(game.last_move_at).getTime() : now;
-      const elapsed = Math.floor((now - lastMove) / 1000);
+      const lastMove = lastMoveTimeRef.current;
+      const elapsedSeconds = Math.floor((now - lastMove) / 1000);
 
       if (game.current_turn === 'w') {
-        const newTime = Math.max(0, (game.white_time_remaining || 0) - elapsed);
+        const newTime = Math.max(0, (game.white_time_remaining || 0) - elapsedSeconds);
         setWhiteTime(newTime);
         if (newTime === 0 && isWhitePlayer) {
           handleTimeout();
         }
       } else {
-        const newTime = Math.max(0, (game.black_time_remaining || 0) - elapsed);
+        const newTime = Math.max(0, (game.black_time_remaining || 0) - elapsedSeconds);
         setBlackTime(newTime);
         if (newTime === 0 && !isWhitePlayer) {
           handleTimeout();

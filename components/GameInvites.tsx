@@ -93,6 +93,9 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
   const receivedInvites = invites.filter((inv) => inv.to_user_email === user?.email && inv.status === 'pending');
   const sentInvites = invites.filter((inv) => inv.from_user_id === user?.id && inv.status === 'pending');
   const acceptedInvites = invites.filter((inv) => inv.from_user_id === user?.id && inv.status === 'accepted');
+  
+  // Also show accepted invites for recipients (they can join too)
+  const myAcceptedInvitesAsRecipient = invites.filter((inv) => inv.to_user_email === user?.email && inv.status === 'accepted');
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -208,12 +211,13 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
               </div>
 
               {/* Accepted Invites - Ready to Join */}
-              {acceptedInvites.length > 0 && (
+              {(acceptedInvites.length > 0 || myAcceptedInvitesAsRecipient.length > 0) && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Ready to Play ({acceptedInvites.length})
+                    Ready to Play ({acceptedInvites.length + myAcceptedInvitesAsRecipient.length})
                   </h3>
                   <div className="space-y-3">
+                    {/* Invites you sent that were accepted */}
                     {acceptedInvites.map((invite) => (
                       <div
                         key={invite.id}
@@ -234,6 +238,44 @@ export default function GameInvites({ onClose, onAcceptInvite }: GameInvitesProp
                             </div>
                             <p className="text-xs text-gray-500">
                               Accepted {formatDate(invite.created_at)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (invite.game_id) {
+                                onAcceptInvite(invite.game_id);
+                                onClose();
+                              }
+                            }}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                          >
+                            Join Game
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Invites you received and accepted */}
+                    {myAcceptedInvitesAsRecipient.map((invite) => (
+                      <div
+                        key={invite.id}
+                        className="border border-green-200 rounded-lg p-4 bg-green-50"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">✅</span>
+                              <div>
+                                <p className="font-semibold text-gray-800">
+                                  Game with {invite.sender_email || invite.from_user_email || 'Unknown'}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {invite.variant_name} • {formatTime(invite.time_control)} per player
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              Started {formatDate(invite.created_at)}
                             </p>
                           </div>
                           <button

@@ -495,6 +495,24 @@ export class EcoChessGame {
     return this.chess.fen();
   }
 
+  public loadFromFen(fen: string): void {
+    try {
+      // Load the FEN into chess.js
+      this.chess.load(fen);
+      
+      // Update our game state board from the FEN
+      this.gameState.board = chessJsToGameBoard(this.chess);
+      
+      // Extract current player from FEN (second field)
+      const fenParts = fen.split(' ');
+      this.gameState.currentPlayer = fenParts[1] as Color;
+      
+      // Note: We don't restore move history from FEN, it's maintained separately in the database
+    } catch (error) {
+      console.error('Failed to load FEN:', error);
+    }
+  }
+
   public resetGame(): void {
     this.gameState = {
       board: JSON.parse(JSON.stringify(this.variant.initialBoard)),
