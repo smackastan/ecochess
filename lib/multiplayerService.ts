@@ -274,10 +274,13 @@ export class MultiplayerService {
           filter: `id=eq.${gameId}`,
         },
         (payload) => {
+          console.log('[Realtime] Game update received:', payload);
           callback(payload.new as MultiplayerGame);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[Realtime] Subscription status:', status);
+      });
 
     return this.gameChannel;
   }

@@ -32,10 +32,13 @@ export default function MultiplayerGameComponent({
   const myColor = isWhitePlayer ? 'w' : 'b';
 
   useEffect(() => {
+    console.log('[Multiplayer] Loading game:', gameId);
     loadGame();
 
     // Subscribe to real-time updates
+    console.log('[Multiplayer] Setting up realtime subscription for game:', gameId);
     const channel = multiplayerService.subscribeToGame(gameId, (updatedGame) => {
+      console.log('[Multiplayer] Received game update:', updatedGame);
       setGame(updatedGame);
       if (chessGame) {
         // Update the chess game state with the new FEN
@@ -46,6 +49,7 @@ export default function MultiplayerGameComponent({
     });
 
     return () => {
+      console.log('[Multiplayer] Cleaning up subscription for game:', gameId);
       multiplayerService.unsubscribeFromGame();
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -129,11 +133,19 @@ export default function MultiplayerGameComponent({
 
   const handleMove = async (sourceSquare: string, targetSquare: string) => {
     if (!chessGame || !game || !isMyTurn || game.game_status !== 'active') {
+      console.log('[Multiplayer] Move blocked:', { 
+        hasChessGame: !!chessGame, 
+        hasGame: !!game, 
+        isMyTurn, 
+        gameStatus: game?.game_status 
+      });
       return false;
     }
 
+    console.log('[Multiplayer] Attempting move:', { sourceSquare, targetSquare });
     const moveSuccessful = chessGame.makeMove(sourceSquare, targetSquare);
     if (!moveSuccessful) {
+      console.log('[Multiplayer] Move failed - invalid move');
       return false;
     }
 
@@ -141,7 +153,14 @@ export default function MultiplayerGameComponent({
     const moveNotation = `${sourceSquare}${targetSquare}`;
     const timeRemaining = myColor === 'w' ? whiteTime : blackTime;
 
-    await multiplayerService.makeMove(gameId, newFen, moveNotation, timeRemaining);
+    console.log('[Multiplayer] Sending move to server:', { newFen, moveNotation, timeRemaining });
+    const result = await multiplayerService.makeMove(gameId, newFen, moveNotation, timeRemaining);
+    
+    if (result.error) {
+      console.error('[Multiplayer] Error sending move:', result.error);
+    } else {
+      console.log('[Multiplayer] Move sent successfully');
+    }
 
     // Check for game end
     const gameState = chessGame.getGameState();
