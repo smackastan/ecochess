@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GameVariant } from '@/types/game';
 
 interface GameSelectorProps {
@@ -58,9 +58,45 @@ function GameCard({ title, description, emoji, difficulty, playerCount, estimate
 }
 
 export default function GameSelector({ onSelectGame }: GameSelectorProps) {
+  const [showAbout, setShowAbout] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-8">
       <div className="max-w-6xl mx-auto">
+        {/* Top Buttons */}
+        <div className="flex justify-between items-center mb-8 -mx-4">
+          {/* Left side - About and Settings */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowAbout(!showAbout)}
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+              title="About"
+            >
+              ℹ️ About
+            </button>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+              title="Settings"
+            >
+              ⚙️ Settings
+            </button>
+          </div>
+
+          {/* Right side - Profile */}
+          <div>
+            <button
+              onClick={() => setShowProfile(!showProfile)}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+              title="Profile"
+            >
+              👤 Profile
+            </button>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4">
@@ -156,6 +192,99 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           </div>
         </div>
       </div>
+
+      {/* About Modal */}
+      {showAbout && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAbout(false)}>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">ℹ️ About Eco Chess</h2>
+            <div className="space-y-3 text-gray-600">
+              <p>
+                <strong className="text-gray-800">Eco Chess</strong> is a minimalist chess variant game focusing on pawn-only battles.
+              </p>
+              <p>
+                Race your pawns to the opposite end of the board to promote and win! Play against friends or challenge our bot opponent.
+              </p>
+              <p className="text-sm text-gray-500 pt-2">
+                Version 1.0.0 • Created with Next.js & TypeScript
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAbout(false)}
+              className="mt-6 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Modal */}
+      {showProfile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowProfile(false)}>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">👤 Player Profile</h2>
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Player Name</p>
+                <p className="text-lg font-semibold text-gray-800">Guest Player</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Games Played</p>
+                <p className="text-lg font-semibold text-gray-800">0</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Wins</p>
+                <p className="text-lg font-semibold text-green-600">0</p>
+              </div>
+              <p className="text-xs text-gray-500 text-center pt-2">
+                Stats are stored locally in your browser
+              </p>
+            </div>
+            <button
+              onClick={() => setShowProfile(false)}
+              className="mt-6 w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-semibold"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowSettings(false)}>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">⚙️ Settings</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <span className="text-gray-800 font-medium">Sound Effects</span>
+                <button className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors text-sm font-semibold">
+                  Coming Soon
+                </button>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <span className="text-gray-800 font-medium">Board Theme</span>
+                <button className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors text-sm font-semibold">
+                  Default
+                </button>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <span className="text-gray-800 font-medium">Animation Speed</span>
+                <button className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors text-sm font-semibold">
+                  Normal
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSettings(false)}
+              className="mt-6 w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors font-semibold"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
