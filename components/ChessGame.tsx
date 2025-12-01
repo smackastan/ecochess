@@ -13,10 +13,104 @@ export default function ChessGame({ onBackToMenu }: ChessGameProps) {
   const { gameState, makeMove, resetGame, variantName } = useGame();
   const [selectedSquare, setSelectedSquare] = useState<[number, number] | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [botMode, setBotMode] = useState(false);
+  const [botColor, setBotColor] = useState<'w' | 'b' | null>(null);
 
   useEffect(() => {
     console.log('Game state updated:', gameState);
   }, [gameState]);
+
+  // Bot logic - makes a move when it's the bot's turn
+  useEffect(() => {
+    if (!botMode || gameState.gameStatus !== 'playing') {
+      return;
+    }
+
+    // Only play if it's the bot's color's turn
+    if (botColor !== gameState.currentPlayer) {
+      return;
+    }
+
+    console.log(`\n🤖 Bot is playing as ${botColor === 'w' ? 'White' : 'Black'}`);
+
+    // Small delay to make it visible
+    const timer = setTimeout(() => {
+      // Find all pawns of the bot's color
+      const botPawns: [number, number][] = [];
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const piece = gameState.board[row][col];
+          if (piece && piece.type === 'p' && piece.color === botColor) {
+            botPawns.push([row, col]);
+          }
+        }
+      }
+
+      console.log(`🤖 Found ${botPawns.length} pawns for bot`);
+
+      const direction = botColor === 'w' ? -1 : 1; // White moves up, black moves down
+      const captureMoves: { from: string; to: string }[] = [];
+      const forwardMoves: { from: string; to: string }[] = [];
+
+      // Check all possible moves for each pawn
+      for (const [row, col] of botPawns) {
+        const targetRow = row + direction;
+        
+        if (targetRow >= 0 && targetRow < 8) {
+          // Check diagonal captures (left and right)
+          for (const colOffset of [-1, 1]) {
+            const targetCol = col + colOffset;
+            if (targetCol >= 0 && targetCol < 8) {
+              const targetPiece = gameState.board[targetRow][targetCol];
+              // If there's an enemy piece, this is a capture
+              if (targetPiece && targetPiece.color !== botColor) {
+                captureMoves.push({
+                  from: coordsToSquare(row, col),
+                  to: coordsToSquare(targetRow, targetCol)
+                });
+                console.log(`🤖 Found capture: ${coordsToSquare(row, col)} x ${coordsToSquare(targetRow, targetCol)}`);
+              }
+            }
+          }
+
+          // Check forward move (only if square is empty)
+          if (!gameState.board[targetRow][col]) {
+            forwardMoves.push({
+              from: coordsToSquare(row, col),
+              to: coordsToSquare(targetRow, col)
+            });
+          }
+        }
+      }
+
+      // Prioritize captures over forward moves
+      const allMoves = [...captureMoves, ...forwardMoves];
+      
+      if (allMoves.length === 0) {
+        console.log(`🤖 Bot couldn't find a valid move`);
+        return;
+      }
+
+      // Shuffle to add some randomness, but captures are at the front
+      const shuffledCaptures = captureMoves.sort(() => Math.random() - 0.5);
+      const shuffledForward = forwardMoves.sort(() => Math.random() - 0.5);
+      const movesToTry = [...shuffledCaptures, ...shuffledForward];
+
+      for (const move of movesToTry) {
+        console.log(`🤖 Attempting bot move: ${move.from} to ${move.to}`);
+        const success = makeMove(move.from, move.to);
+        
+        if (success) {
+          console.log(`🤖 Bot move succeeded!`);
+          return;
+        }
+      }
+
+      console.log(`🤖 Bot couldn't execute any moves`);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [botMode, botColor, gameState, makeMove]);
 
   const handleSquareClick = (row: number, col: number) => {
     const piece = gameState.board[row][col];
@@ -157,7 +251,31 @@ export default function ChessGame({ onBackToMenu }: ChessGameProps) {
         </div>
 
         {/* Chess Board */}
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 gap-4">
+          {/* Bot Toggle Button */}
+          <button
+            onClick={() => {
+              if (!botMode) {
+                // Activating bot - set it to play as the current player's color
+                setBotColor(gameState.currentPlayer);
+                setBotMode(true);
+                console.log(`🤖 Bot activated! Playing as ${gameState.currentPlayer === 'w' ? 'White' : 'Black'}`);
+              } else {
+                // Deactivating bot
+                setBotMode(false);
+                setBotColor(null);
+                console.log(`🤖 Bot deactivated!`);
+              }
+            }}
+            className={`px-6 py-3 rounded-lg transition-colors font-semibold shadow-md ${
+              botMode 
+                ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                : 'bg-purple-500 hover:bg-purple-600 text-white'
+            }`}
+          >
+            {botMode ? `🤖 Playing vs Bot (${botColor === 'w' ? 'White' : 'Black'})` : '👤 Switch to Bot'}
+          </button>
+
           <SimpleChessboard
             board={gameState.board}
             onSquareClick={handleSquareClick}
