@@ -14,7 +14,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-green-50 to-blue-50">
       <GameProvider key={selectedVariant.name} variant={selectedVariant}>
         <ChessGame onBackToMenu={() => setSelectedVariant(null)} />
       </GameProvider>
