@@ -238,14 +238,14 @@ export default function ChessGame({ onBackToMenu }: ChessGameProps) {
     <div className="h-screen flex overflow-hidden">
       {/* Left Side - Chess Board and Logo */}
       <div className="flex-1 flex flex-col">
-        {/* Top Section with Logo */}
+        {/* Top Section with Back Button */}
         <div className="p-4">
           {onBackToMenu && (
             <button
               onClick={onBackToMenu}
-              className="px-4 py-2 bg-white/90 hover:bg-white text-gray-800 rounded-lg transition-colors flex items-center gap-2 shadow-sm text-xl font-bold"
+              className="px-4 py-2 bg-white/90 hover:bg-white text-gray-800 rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
             >
-              🌱 Eco Chess
+              ← Back to Menu
             </button>
           )}
         </div>
@@ -286,6 +286,14 @@ export default function ChessGame({ onBackToMenu }: ChessGameProps) {
 
       {/* Right Side Panel */}
       <div className="w-96 bg-white border-l border-gray-200 flex flex-col overflow-hidden">
+        {/* Logo */}
+        <div className="p-4 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-800 text-center flex items-center justify-center gap-2">
+            <img src="/vercel.svg" alt="Eco Chess Logo" className="w-8 h-8 bg-black rounded-full p-1" />
+            Eco Chess
+          </h1>
+        </div>
+
         {/* Game Status */}
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold mb-3">Game Status</h2>

@@ -99,8 +99,9 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4">
-            🌱 Eco Chess
+          <h1 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-3">
+            <img src="/vercel.svg" alt="Eco Chess Logo" className="w-12 h-12 bg-black rounded-full p-2" />
+            Eco Chess
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Master chess through constraint-based mini-games.<br />
@@ -113,7 +114,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           <GameCard
             title="Pawn Race"
             description="All 8 pawns race to promotion. Classic endgame training!"
-            emoji="♟️"
+            emoji="🏁"
             difficulty="Easy"
             playerCount="2 Players"
             estimatedTime="5-10 min"
@@ -128,7 +129,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           <GameCard
             title="Three Pawns Sprint"
             description="Only 3 pawns per side. Fast-paced tactical race!"
-            emoji="🏃"
+            emoji="⚡"
             difficulty="Medium"
             playerCount="2 Players"
             estimatedTime="3-5 min"
@@ -142,7 +143,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           <GameCard
             title="Bishop Hunt"
             description="Can 3 black pawns promote before the bishop hunts them?"
-            emoji="♗"
+            emoji="🎯"
             difficulty="Hard"
             playerCount="2 Players"
             estimatedTime="5-8 min"

@@ -54,7 +54,7 @@ export default function SimpleChessboard({ board, onSquareClick, selectedSquare 
                 `}
               >
                 {piece && (
-                  <span className={`text-5xl select-none ${piece.color === 'w' ? 'text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]' : 'text-black'}`}>
+                  <span className={`text-5xl select-none ${piece.color === 'w' ? 'text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)]' : 'text-black'}`}>
                     {pieceSymbols[`${piece.color}${piece.type}`]}
                   </span>
                 )}
