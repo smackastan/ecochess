@@ -31,7 +31,7 @@ function GameCard({ title, description, emoji, difficulty, playerCount, estimate
     >
       <div className="text-6xl mb-4 text-center">{emoji}</div>
       <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">{title}</h3>
-      <p className="text-gray-600 mb-4 text-center min-h-[3rem]">{description}</p>
+      <p className="text-gray-600 mb-4 text-center min-h-[3rem] text-balance">{description}</p>
       
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-between text-sm">
@@ -64,46 +64,47 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Top Buttons */}
-        <div className="flex justify-between items-center mb-8 -mx-4">
-          {/* Left side - About and Settings */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowAbout(!showAbout)}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
-              title="About"
-            >
-              ℹ️ About
-            </button>
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
-              title="Settings"
-            >
-              ⚙️ Settings
-            </button>
-          </div>
-
-          {/* Right side - Profile */}
-          <div>
-            <button
-              onClick={() => setShowProfile(!showProfile)}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
-              title="Profile"
-            >
-              👤 Profile
-            </button>
-          </div>
+      {/* Top Buttons - Outside container to reach edges */}
+      <div className="flex justify-between items-center mb-8 px-8">
+        {/* Left side - Settings */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+            title="Settings"
+          >
+            ⚙️ Settings
+          </button>
         </div>
 
+        {/* Right side - About and Profile */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowAbout(!showAbout)}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+            title="About"
+          >
+            ℹ️ About
+          </button>
+          <button
+            onClick={() => setShowProfile(!showProfile)}
+            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md font-semibold"
+            title="Profile"
+          >
+            👤 Profile
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4">
             🌱 Eco Chess
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Master chess through constraint-based mini-games. Choose your challenge and race to victory!
+            Master chess through constraint-based mini-games.<br />
+            Choose your challenge and race to victory!
           </p>
         </div>
 
@@ -111,7 +112,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           <GameCard
             title="Pawn Race"
-            description="All 8 pawns race to promotion. Classic endgame training with full board action!"
+            description="All 8 pawns race to promotion. Classic endgame training!"
             emoji="♟️"
             difficulty="Easy"
             playerCount="2 Players"
@@ -126,7 +127,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           
           <GameCard
             title="Three Pawns Sprint"
-            description="Only 3 pawns per side on the kingside. Fast-paced tactical race!"
+            description="Only 3 pawns per side. Fast-paced tactical race!"
             emoji="🏃"
             difficulty="Medium"
             playerCount="2 Players"
@@ -140,7 +141,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
           
           <GameCard
             title="Bishop Hunt"
-            description="Can 3 black pawns promote before the white bishop hunts them all down?"
+            description="Can 3 black pawns promote before the bishop hunts them?"
             emoji="♗"
             difficulty="Hard"
             playerCount="2 Players"
@@ -151,34 +152,6 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
               });
             }}
           />
-        </div>
-
-        {/* Info Section */}
-        <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🎯 What is Eco Chess?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <div className="text-3xl mb-2">🎲</div>
-              <h3 className="font-semibold text-gray-800 mb-2">Constraint-Based</h3>
-              <p className="text-gray-600 text-sm">
-                Each game removes pieces and adds unique rules, focusing your skills on specific scenarios.
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl mb-2">⚡</div>
-              <h3 className="font-semibold text-gray-800 mb-2">Quick Games</h3>
-              <p className="text-gray-600 text-sm">
-                Finish a complete game in minutes. Perfect for learning or a quick chess fix!
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl mb-2">🧠</div>
-              <h3 className="font-semibold text-gray-800 mb-2">Skill Building</h3>
-              <p className="text-gray-600 text-sm">
-                Master specific endgame patterns and tactics through focused practice.
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Coming Soon */}
@@ -196,22 +169,51 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
       {/* About Modal */}
       {showAbout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAbout(false)}>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-2xl font-bold mb-4 text-gray-800">ℹ️ About Eco Chess</h2>
-            <div className="space-y-3 text-gray-600">
+            <div className="space-y-3 text-gray-600 mb-6">
               <p>
                 <strong className="text-gray-800">Eco Chess</strong> is a minimalist chess variant game focusing on pawn-only battles.
               </p>
               <p>
                 Race your pawns to the opposite end of the board to promote and win! Play against friends or challenge our bot opponent.
               </p>
-              <p className="text-sm text-gray-500 pt-2">
-                Version 1.0.0 • Created with Next.js & TypeScript
-              </p>
             </div>
+
+            {/* What is Eco Chess Section */}
+            <div className="bg-gray-50 rounded-xl p-6 mb-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 What is Eco Chess?</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <div className="text-3xl mb-2">🎲</div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Constraint-Based</h4>
+                  <p className="text-gray-600 text-sm">
+                    Each game removes pieces and adds unique rules, focusing your skills on specific scenarios.
+                  </p>
+                </div>
+                <div>
+                  <div className="text-3xl mb-2">⚡</div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Quick Games</h4>
+                  <p className="text-gray-600 text-sm">
+                    Finish a complete game in minutes. Perfect for learning or a quick chess fix!
+                  </p>
+                </div>
+                <div>
+                  <div className="text-3xl mb-2">🧠</div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Skill Building</h4>
+                  <p className="text-gray-600 text-sm">
+                    Master specific endgame patterns and tactics through focused practice.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-500 text-center mb-4">
+              Version 1.0.0 • Created with Next.js & TypeScript
+            </p>
             <button
               onClick={() => setShowAbout(false)}
-              className="mt-6 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
+              className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
             >
               Close
             </button>
