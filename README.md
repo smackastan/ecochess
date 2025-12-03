@@ -1,8 +1,8 @@
-# 🌱 Eco Chess
+# Eco Chess
 
 An ecological approach to chess - playing constraint-based mini games that focus on specific pieces and winning conditions.
 
-## 🎮 Current Game: Pawn Race
+## Current Game: Pawn Race
 
 The first variant removes every piece except for the pawns. Two players race to promote a pawn first to win!
 
@@ -12,7 +12,7 @@ The first variant removes every piece except for the pawns. Two players race to 
 - First player to promote a pawn to the opposite end wins
 - Turn-based gameplay with move validation
 
-## 🚀 Getting Started
+## Getting Started
 
 First, install dependencies:
 
@@ -28,7 +28,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to play!
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 ├── app/                 # Next.js app directory
@@ -46,16 +46,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to play!
     └── game.ts        # Game-related types
 ```
 
-## 🎯 Features
+## Features
 
-- ✅ Turn-based gameplay
-- ✅ Move validation for pawn moves
-- ✅ Win condition detection (pawn promotion)
-- ✅ Move history tracking
-- ✅ Clean, responsive UI
-- ✅ TypeScript for type safety
+-  Turn-based gameplay
+-  Move validation for pawn moves
+-  Win condition detection (pawn promotion)
+-  Move history tracking
+-  Clean, responsive UI
+-  TypeScript for type safety
 
-## 🔮 Future Game Variants
+## Future Game Variants
 
 The architecture supports adding more constraint-based chess variants:
 - Knights only
@@ -63,7 +63,7 @@ The architecture supports adding more constraint-based chess variants:
 - King and Pawns endgame
 - And more creative constraints!
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
@@ -71,24 +71,13 @@ The architecture supports adding more constraint-based chess variants:
 - **Chess Logic:** chess.js
 - **State Management:** React Context + useReducer
 
-## 📚 Documentation
+## Documentation
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and design decisions
 - [QUICKSTART.md](QUICKSTART.md) - Quick start guide for developers
 - [GAME_STATUS.md](GAME_STATUS.md) - Current game status and features
 - [SOLUTION.md](SOLUTION.md) - Technical solutions and fixes
 
-## Learn More About Next.js
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
